@@ -4,11 +4,13 @@ import asyncio
 import logging
 from core.settings import settings
 from core.utils.commands import set_commands
+from core.psql import check_user_exists, register_user
 
 
 
 async def start_bot(bot: Bot):
     await set_commands(bot)
+    await register_user(bot)
     await bot.send_message(settings.bots.admin_id, text='Бот запущен')
 
 
