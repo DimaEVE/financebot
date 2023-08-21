@@ -7,6 +7,7 @@ from core.utils.commands import set_commands
 from core.psql import find_req
 from aiogram import F
 from aiogram.filters import Command
+from core.handlres import basic
 
 
 async def start_bot(bot: Bot):
@@ -26,9 +27,12 @@ async def start():
 
     dp = Dispatcher()
 
-    dp.message.register(find_req, F.text == 'user')
+    dp.message.register(basic.registration, Command(commands='registration'))
     dp.startup.register(start_bot)
     dp.shutdown.register(stop_bot)
+    dp.message.register(basic.balance_command, Command(commands='balance'))
+
+
 
 
     try:

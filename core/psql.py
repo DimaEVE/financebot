@@ -33,16 +33,25 @@ async def find_req(message: Message, bot: Bot):
         user_exists = await check_user_exists(connection, user_id)
 
         if not user_exists:
-            await  register_user(connection, user_id, username)
+            await register_user(connection, user_id, username)
+            await bot.send_message(message.chat.id, f"Вы успешно зарегистрированы под номером {user_id}.")
             print("Пользователь успешно зарегистрирован!")
 
         else:
+            await bot.send_message(message.chat.id, f"Пользователь уже зарегистрирован.")
             print("Пользователь уже зарегистрирован.")
 
     await db_pool.close()
 
 
-async def find(message: Message, bot: Bot):
-    user_name = message.from_user.first_name
-    user_id = message.from_user.id
+async def get_user_balance(message: Message, bot: Bot):
+    db_pool = await connect_to_db()
+    async with db_pool.acquire() as connection:
+        user_id = message.from_user.id
+        query = "SELECT balance FROM users WHERE user_id = $1"
+        balance = await connection.fetchval(query, user_id)
+        await bot.send_message(message.chat.id, f"Ваш текущий баланс: {balance}")
+    await db_pool.close()
+
+
 

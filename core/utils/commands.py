@@ -8,6 +8,14 @@ async def set_commands(bot: Bot):
             command='start',
             description='Начало работы'
         ),
+        BotCommand(
+            command='balance',
+            description='Проверить баланс'
+        ),
+        BotCommand(
+            command='registration',
+            description='Регистрация'
+        ),
     ]
 
     await bot.set_my_commands(commands, BotCommandScopeDefault())
