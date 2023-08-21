@@ -15,7 +15,7 @@ class Settings:
 
 def get_settings(path: str):
     env = Env()
-    env.read_ebv(path)
+    env.read_env(path)
 
     return Settings(
         bots=Bots(
