@@ -4,26 +4,14 @@ import asyncio
 import logging
 from core.settings import settings
 from core.utils.commands import set_commands
-from core.psql import check_user_exists, on_startup_psql, register_user
+from core.psql import find_req
+from aiogram import F
 from aiogram.filters import Command
 
 
 async def start_bot(bot: Bot):
     await set_commands(bot)
     await bot.send_message(settings.bots.admin_id, text='Бот запущен')
-
-
-async def req_user(message: Message):
-    user_id = message.from_user.id
-    async with dp['db'].acquire() as connection:
-        user_exists = await check_user_exists(connection, user_id)
-
-        if not user_exists:
-            await register_user(connection, user_id, message.from_user.username)
-            await message.answer('Вы успешно зарегистрированы')
-
-        else:
-            await message.answer('Вы уже зарегестрированы')
 
 
 async def stop_bot(bot: Bot):
@@ -38,8 +26,7 @@ async def start():
 
     dp = Dispatcher()
 
-    await on_startup_psql(dp)
-    dp.register_message_handler(req_user, Command(commands='requser'))
+    dp.message.register(find_req, F.text == 'user')
     dp.startup.register(start_bot)
     dp.shutdown.register(stop_bot)
 
