@@ -8,6 +8,10 @@ from core.psql import find_req
 from aiogram import F
 from aiogram.filters import Command
 from core.handlres import basic
+from core.handlres.basic import get_inline
+from core.handlres.callback import select_balance
+from core.psql import get_user_balance
+from core.handlres.basic import select_balance_callback
 
 
 async def start_bot(bot: Bot):
@@ -28,10 +32,12 @@ async def start():
     dp = Dispatcher()
 
     dp.message.register(basic.registration, Command(commands='registration'))
+    dp.message.register(get_inline, Command(commands='inline'))
+    dp.callback_query.register(select_balance_callback, lambda c: c.data == 'select_balance')
     dp.startup.register(start_bot)
     dp.shutdown.register(stop_bot)
-    dp.message.register(basic.balance_command, Command(commands='balance'))
-
+    #dp.message.register(basic.balance_command, Command(commands='balance'))
+    # dp.callback_query(basic.process_show_balance, lambda c: c.data == 'show_balance')
 
 
 
