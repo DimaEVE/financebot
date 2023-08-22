@@ -4,6 +4,8 @@ from aiogram.filters.command import Command
 from core.psql import get_user_balance, find_req
 from core.keyboards.inline import get_inline_keyboard, inc_exp_trans
 from aiogram.types import CallbackQuery
+from core.handlres.form import get_inc_trans
+from aiogram.fsm.context import FSMContext
 
 dp = Dispatcher()
 
@@ -31,4 +33,9 @@ async def select_balance_callback(query: CallbackQuery, bot: Bot):
 
     # await query.message.edit_text(f"Ваш текущий баланс: {balance}")
     await query.answer()
+
+
+async def dohod(message: Message, bot: Bot, state: FSMContext):
+    await message.answer(f" {message.from_user.first_name}. Ты выбрал доход",)
+    await get_inc_trans(message, state)
 

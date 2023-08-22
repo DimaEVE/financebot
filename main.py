@@ -8,10 +8,13 @@ from core.psql import find_req
 from aiogram import F
 from aiogram.filters import Command
 from core.handlres import basic
-from core.handlres.basic import get_inline
+from core.handlres.basic import get_inline, dohod
 from core.handlres.callback import select_balance
 from core.psql import get_user_balance
+from core.handlres import form
+from core.utils.statesform import StepsForm
 from core.handlres.basic import select_balance_callback
+from core.handlres.callback import inc_trans
 
 
 async def start_bot(bot: Bot):
@@ -34,6 +37,10 @@ async def start():
     dp.message.register(basic.registration, Command(commands='registration'))
     dp.message.register(get_inline, Command(commands='inline'))
     dp.callback_query.register(select_balance_callback, lambda c: c.data == 'select_balance')
+    dp.callback_query.register(dohod, F.data.startswith('inc'))
+    #dp.callback_query.register(form.get_inc_trans, lambda c: c.data == 'inc_trans')
+    #dp.message.register(form.get_inc_trans, F.text == 'Доход')
+    dp.message.register(form.get_inc, StepsForm.GET_INC_TRANS)
     dp.startup.register(start_bot)
     dp.shutdown.register(stop_bot)
     #dp.message.register(basic.balance_command, Command(commands='balance'))
