@@ -2,9 +2,16 @@ from aiogram import Bot
 from aiogram.types import Message
 import json
 from core.keyboards.reply import reply_keyboard, loc_tel_poll_keyboard, get_reply_keyboard
+from core.keyboards.inline import select_finance, get_inline_keyboard
+from core.utils.dbconnect import Request
 
 
-async def get_start(message: Message, bot: Bot):
+async def get_inline(message: Message, bot: Bot):
+    await message.answer(f"Привет, {message.from_user.first_name}. Показываю инлайн клавиатуру.",
+                         reply_markup=get_inline_keyboard())
+
+async def get_start(message: Message, bot: Bot, request: Request):
+    await request.add_data(message.from_user.id, message.from_user.first_name)
     #await bot.send_message(message.from_user.id, f'<b>Привет {message.from_user.first_name}. Рад тебя видеть!</b>')
     await message.answer(f'<s>Привет {message.from_user.first_name}. Рад тебя видеть!</s>',
                          reply_markup=get_reply_keyboard())
