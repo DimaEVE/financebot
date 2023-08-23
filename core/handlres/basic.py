@@ -1,41 +1,27 @@
-from aiogram.types import Message, CallbackQuery
-from aiogram import types, Bot, Dispatcher
-from aiogram.filters.command import Command
-from core.psql import get_user_balance, find_req
-from core.keyboards.inline import get_inline_keyboard, inc_exp_trans
-from aiogram.types import CallbackQuery
-from core.handlres.form import get_inc_trans
-from aiogram.fsm.context import FSMContext
-
-dp = Dispatcher()
+from aiogram import Bot
+from aiogram.types import Message
+import json
+from core.keyboards.reply import reply_keyboard, loc_tel_poll_keyboard, get_reply_keyboard
 
 
-async def get_inline(message: Message, bot: Bot):
-    await message.answer(f"Привет {message.from_user.first_name}. Показываю инлайн кнопки",
-                         reply_markup=get_inline_keyboard())
+async def get_start(message: Message, bot: Bot):
+    #await bot.send_message(message.from_user.id, f'<b>Привет {message.from_user.first_name}. Рад тебя видеть!</b>')
+    await message.answer(f'<s>Привет {message.from_user.first_name}. Рад тебя видеть!</s>',
+                         reply_markup=get_reply_keyboard())
+    #await message.reply(f'<tg-spoiler>Привет {message.from_user.first_name}. Рад тебя видеть!</tg-spoiler>')
 
 
-# @dp.message(Command('balance'))
-# async def balance_command(message: Message, bot: Bot):
-#     await get_user_balance(message, bot)
+async def get_photo(message: Message, bot: Bot):
+    await message.answer(f"Отлично ты отправил картинку, сохраним ее")
+    file = await bot.get_file(message.photo[-1].file_id)
+    await bot.download_file(file.file_path, 'photo.jpg')
 
 
-@dp.message(Command('registration'))
-async def registration(message: Message, bot: Bot):
-    await find_req(message, bot)
+async def get_hello(message: Message, bot: Bot):
+    await message.answer(f"И тебе привет")
+    json_str = json.dumps(message.dict(), default=str)
+    print(json_str)
 
 
-async def select_balance_callback(query: CallbackQuery, bot: Bot):
-    user_id = query.from_user.id
-    balance = await get_user_balance(query.message, bot, user_id)
-    my_balance = f"Ваш текущий баланс: {balance}"
-    await query.message.edit_text(my_balance, reply_markup=inc_exp_trans())
-
-    # await query.message.edit_text(f"Ваш текущий баланс: {balance}")
-    await query.answer()
-
-
-async def dohod(message: Message, bot: Bot, state: FSMContext):
-    await message.answer(f" {message.from_user.first_name}. Ты выбрал доход",)
-    await get_inc_trans(message, state)
-
+async def get_location(message: Message, bot: Bot):
+    await message.answer(f"Ты отправил локацию!\r\a {message.location.latitude}\r\n{message.location.longitude}")
