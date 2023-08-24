@@ -1,6 +1,7 @@
 from aiogram.types import Message
 from aiogram.fsm.context import FSMContext
 from core.utils.statesform import StepsForm
+from core.utils.dbconnect import Request
 
 
 async def add_expenses(message: Message, state: FSMContext):
@@ -8,14 +9,30 @@ async def add_expenses(message: Message, state: FSMContext):
     await state.set_state(StepsForm.GET_EXP_SUM)
 
 
-async def add_exp_cat(message: Message, state: FSMContext):
+async def add_exp_sum(message: Message, state: FSMContext):
     await message.answer(f'Ваш расход: {message.text}\r\nТеперь выберите категорию расхода')
+    await state.update_data(exponse=message.text)
     await state.set_state(StepsForm.GET_EXP_CAT)
 
 
-async def add_exp_desc(message: Message, state: FSMContext):
-    await message.answer("Если необходимо введите описание траты:")
+async def add_exp_cat(message: Message, state: FSMContext):
+    await message.answer(f"Выбрана категория {message.text}.\r\nЕсли необходимо введите описание траты:")
+    await state.update_data(category=message.text)
     await state.set_state(StepsForm.GET_EXP_DESC)
+
+
+async def add_exp_desc(message: Message, state: FSMContext, request: Request):
+    await message.answer(f'Расход записан')
+    await state.update_data(description=message.text)
+    context_data = await state.get_data()
+    summa = context_data.get('exponse')
+    category = 2
+    #category = context_data.get('category')
+    desc = context_data.get('description')
+    new_balance = await request.add_expense(message.from_user.id, summa, category, desc)
+    await message.answer(f'Новый баланс: {new_balance}')
+    await state.clear()
+
     
 
 async def get_form(message: Message, state: FSMContext):
