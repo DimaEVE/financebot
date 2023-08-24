@@ -3,10 +3,24 @@ from aiogram.fsm.context import FSMContext
 from core.utils.statesform import StepsForm
 
 
+async def add_expenses(message: Message, state: FSMContext):
+    await message.answer(f'{message.from_user.first_name} введите сумму расхода:')
+    await state.set_state(StepsForm.GET_EXP_SUM)
+
+
+async def add_exp_cat(message: Message, state: FSMContext):
+    await message.answer(f'Ваш расход: {message.text}\r\nТеперь выберите категорию расхода')
+    await state.set_state(StepsForm.GET_EXP_CAT)
+
+
+async def add_exp_desc(message: Message, state: FSMContext):
+    await message.answer("Если необходимо введите описание траты:")
+    await state.set_state(StepsForm.GET_EXP_DESC)
+    
+
 async def get_form(message: Message, state: FSMContext):
     await message.answer(f'{message.from_user.first_name}, начинаем заполнять анкету. Введи свое имя')
     await state.set_state(StepsForm.GET_NAME)
-
 
 
 async def get_name(message: Message, state: FSMContext):
