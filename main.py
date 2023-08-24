@@ -5,12 +5,14 @@ import asyncio
 import logging
 import asyncpg
 from core.settings import settings
-from core.handlres.basic import get_start, get_photo, get_hello, get_location, get_inline
+from core.handlres.basic import get_start, get_photo, get_hello, get_location, get_inline, get_balance
 from core.filters.iscontact import IsTrueContact
 from core.handlres.contact import get_fake_contact, get_true_contact
 from core.utils.commands import set_commands
 from core.handlres.callback import select_balans
 from core.middlewares.dbmiddleware import DbSession
+from core.handlres import form
+from core.utils.statesform import StepsForm
 
 
 async def start_bot(bot: Bot):
@@ -43,7 +45,12 @@ async def start():
     dp.message.register(get_fake_contact, F.contact)
     dp.message.register(get_location, F.location)
     dp.message.register(get_inline, Command(commands='inline'))
+    dp.message.register(get_balance, F.text == 'Баланс')
     dp.callback_query.register(select_balans, F.data.startswith('balans'))
+    dp.message.register(form.get_form, Command(commands='form'))
+    dp.message.register(form.get_name, StepsForm.GET_NAME)
+    dp.message.register(form.get_last_name, StepsForm.GET_LAST_NAME)
+    dp.message.register(form.get_age, StepsForm.GET_AGE)
 
 
     try:

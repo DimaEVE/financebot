@@ -15,6 +15,10 @@ async def set_commands(bot: Bot):
         BotCommand(
             command='inline',
             description='Показать инлайн клавиатуру'
+        ),
+        BotCommand(
+            command='form',
+            description='Начать опрос'
         )
     ]
 
