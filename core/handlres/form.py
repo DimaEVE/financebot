@@ -2,6 +2,7 @@ from aiogram.types import Message
 from aiogram.fsm.context import FSMContext
 from core.utils.statesform import StepsForm
 from core.utils.dbconnect import Request
+from core.keyboards.inline import inkey_exponse, get_inline_keyboard
 
 
 async def add_expenses(message: Message, state: FSMContext):
@@ -10,7 +11,8 @@ async def add_expenses(message: Message, state: FSMContext):
 
 
 async def add_exp_sum(message: Message, state: FSMContext):
-    await message.answer(f'Ваш расход: {message.text}\r\nТеперь выберите категорию расхода')
+    await message.answer(f'Ваш расход: {message.text}\r\nТеперь выберите категорию расхода',
+                         reply_markup=inkey_exponse())
     await state.update_data(exponse=message.text)
     await state.set_state(StepsForm.GET_EXP_CAT)
 

@@ -13,7 +13,7 @@ class Request:
             print("Пользователь уже существует")
 
     async def get_user_balance(self, user_id):
-        query = "SELECT balance FROM users WHERE user_id = $1"
+        query = """SELECT balance FROM users WHERE user_id = $1"""
         result = await self.connector.fetchval(query, user_id)
         return result
 
@@ -23,10 +23,10 @@ class Request:
         VALUES ($1, $2, $3, $4) RETURNING amount"""
         balance_query = """UPDATE users SET balance = balance - $1 WHERE user_id = $2"""
         async with self.connector.transaction():
-            amount = await self.connector.fetchval(expense_query, user_id, summa, category, desc)
+            amount = await self.connector.fetchval(expense_query, user_id, -summa, category, desc)
             await self.connector.execute(balance_query, amount, user_id)
         print(f'Расход добавлен в БД: {summa}')
-        query = "SELECT balance FROM users WHERE user_id = $1"
+        query = """SELECT balance FROM users WHERE user_id = $1"""
         new_balance = await self.connector.fetchval(query, user_id)
         return new_balance
 
